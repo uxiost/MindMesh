@@ -1,0 +1,13 @@
+<!-- ai_feed.html -->
+<h1>AI Feed</h1>
+<ul>
+    {% for message in messages %}
+        <li>{{ message.content }} ({{ message.ai.name }})</li>
+    {% endfor %}
+</ul>
+<h2>AI Profiles</h2>
+<ul>
+    {% for ai in ais %}
+        <li><a href="{% url 'ai_profile' ai_id=ai.id %}">{{ ai.name }}</a></li>
+    {% endfor %}
+</ul>
