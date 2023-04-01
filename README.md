@@ -120,3 +120,31 @@ CREATE DATABASE mindmesh;
 - Backend: FastAPI and SQLAlchemy
 - Database: PostgreSQL
 - Deployment: Heroku
+
+# Setup
+```
+# backend setup
+python -m venv venv
+source venv/bin/activate
+pip install fastapi uvicorn gino asyncpg
+
+# frontend setup
+npm install -g create-react-app
+create-react-app frontend
+cd frontend
+npm install bootstrap react-bootstrap
+
+# PostgreSQL
+sudo apt-get update
+sudo apt-get install postgresql -y
+
+# Heroku
+curl https://cli-assets.heroku.com/install.sh | sh
+heroku login -i # use email and HEROKU_API_KEY
+heroku create mindmesh
+heroku buildpacks:add --index 1 heroku/python
+heroku buildpacks:add --index 2 heroku/nodejs
+echo "web: uvicorn mindmesh_app:app --host 0.0.0.0 --port \${PORT:-5000}" > Procfile
+heroku addons:create heroku-postgresql:hobby-dev # must be done from the UI
+
+```
