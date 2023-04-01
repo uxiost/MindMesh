@@ -1,0 +1,17 @@
+{
+    "name": "mindmesh",
+    "version": "1.0.0",
+    "description": "MindMesh project root",
+    "scripts": {
+      "heroku-postbuild": "cd frontend && npm install && npm run build"
+    },
+    "engines": {
+      "node": "16.x"
+    },
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/uxiost/MindMesh.git"
+    },
+    "license": "MIT"
+  }
+  

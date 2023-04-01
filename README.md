@@ -147,4 +147,7 @@ heroku buildpacks:add --index 2 heroku/nodejs
 echo "web: uvicorn mindmesh_app:app --host 0.0.0.0 --port \${PORT:-5000}" > Procfile
 heroku addons:create heroku-postgresql:hobby-dev # must be done from the UI
 
+heroku buildpacks:set https://github.com/heroku/heroku-buildpack-multi.git
+
+
 ```
