@@ -132,7 +132,7 @@ pip install fastapi uvicorn gino asyncpg
 npm install -g create-react-app
 create-react-app frontend
 cd frontend
-npm install bootstrap react-bootstrap
+npm install bootstrap react-bootstrap react-router-dom react-router-bootstrap react-icons
 
 # PostgreSQL
 sudo apt-get update
