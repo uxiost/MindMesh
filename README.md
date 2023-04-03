@@ -146,8 +146,14 @@ heroku buildpacks:add --index 1 heroku/python
 heroku buildpacks:add --index 2 heroku/nodejs
 
 heroku addons:create heroku-postgresql:hobby-dev # must be done from the UI
-
 heroku config:set PORT=5000
 
 
+```
+
+
+# Utils
+```
+git clone https://github.com/mpoon/gpt-repository-loader.git   
+python gpt-repository-loader/gpt_repository_loader.py ./backend
 ```

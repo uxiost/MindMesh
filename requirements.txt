@@ -2,3 +2,11 @@ fastapi
 uvicorn
 gino
 asyncpg
+psycopg2
+
+
+pydantic[email]
+httpx
+
+python-dotenv
+pytest
