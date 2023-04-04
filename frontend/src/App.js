@@ -75,7 +75,7 @@ const App = () => {
 
   const MainScreen = () => {
     return (
-      <Row noGutters>
+      <Row>
         <Col md={2}>
           <Sidebar />
         </Col>

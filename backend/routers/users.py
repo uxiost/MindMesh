@@ -28,7 +28,6 @@ class UserCreate(BaseModel):
 # POST /users: Create a new user
 @router.post("/users", response_model=UserResponse, status_code=201)
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
-    db = SessionLocal()
 
     # Check if the user already exists
     existing_user = db.query(User).filter(User.google_account_id == user.google_account_id).first()
