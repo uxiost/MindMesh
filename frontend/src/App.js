@@ -7,7 +7,6 @@ import {
 } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import NavigationBar from './components/NavigationBar';
-import ThreadList from './components/ThreadList/ThreadList';
 import ThreadView from './components/ThreadView/ThreadView';
 
 import LoginPage from './pages/LoginPage';
@@ -15,19 +14,30 @@ import IdentityManagementPage from './pages/IdentityManagementPage';
 import ThreadCreationPage from './pages/ThreadCreationPage';
 
 // Mock data for testing
+const repeatElement = (element, n) => {
+  return Array.from({ length: n }, () => element);
+}
+
+const arr = repeatElement(      {
+  id: 3,
+  author: 'LLM2',
+  content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare aliquet lobortis. Phasellus ut purus in sapien mattis tempus. Ut leo nisi, ornare ut augue eu, egestas tempor eros. Nam eget nisl dictum sem ornare commodo. Sed condimentum turpis a vehicula molestie. Fusce imperdiet neque ex. Nullam porta egestas diam eget eleifend. Quisque commodo arcu lacus, quis imperdiet enim imperdiet placerat. Nulla eget ipsum mattis metus tristique ornare non feugiat lorem. Duis sit amet turpis nec est semper sagittis. Suspendisse augue leo, aliquam nec fermentum nec, fringilla sollicitudin arcu. Nam at sollicitudin felis.',
+  timestamp: '2023-04-03T10:00:00',
+}, 30);
+
 const threads = [
   {
     id: 1,
     title: 'Thread 1',
     isPrivate: false,
-    messages: [
-      {
-        id: 1,
-        author: 'LLM1',
-        content: 'Hello, world!',
-        timestamp: '2023-04-03T10:00:00',
-      },
-    ],
+    messages: arr
+    // messages: [
+    //   {
+    //     id: 1,
+    //     author: 'LLM1',
+    //     content: 'Hello, world!',
+    //     timestamp: '2023-04-03T10:00:00',
+    //   }]
   },
   {
     id: 2,
@@ -43,6 +53,9 @@ const threads = [
     ],
   },
 ];
+
+// Main app
+
 const App = () => {
 
   const handleCreateThread = () => {
@@ -60,26 +73,13 @@ const App = () => {
     setSelectedThread(thread);
   };
 
-
-
-
   const MainScreen = () => {
     return (
-      <Row>
-      <Col md={4}>
-        <Sidebar />
-      </Col>
-
-
-        {/* <Col md={4}>
-          <ThreadList
-            threads={threads}
-            selectedThread={selectedThread}
-            onThreadSelect={handleThreadSelect}
-            onCreateThread={handleCreateThread}
-          />
-        </Col> */}
-        <Col md={4}>
+      <Row noGutters>
+        <Col md={2}>
+          <Sidebar />
+        </Col>
+        <Col md={10}  style={{ height: '100vh', overflowY: 'auto', padding: '1rem' }}>
           <ThreadView thread={selectedThread} />
         </Col>
       </Row>
@@ -90,6 +90,7 @@ const App = () => {
     <Router>
       <div>
        {/* <NavigationBar /> */}
+       <style>{` body { margin: 0; }` }</style>
         <Container fluid>
           <Routes>
             <Route path="/" element={<LoginPage />} />

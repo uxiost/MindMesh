@@ -1,7 +1,8 @@
 import React from 'react';
 import { ListGroup, Dropdown } from 'react-bootstrap';
+import { ResizableBox } from 'react-resizable';
+import 'react-resizable/css/styles.css';
 
-// Mock data for testing
 const currentUser = 'John Doe';
 const models = ['Model 1', 'Model 2', 'Model 3'];
 const threads = [
@@ -19,7 +20,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="d-flex flex-column align-items-stretch bg-body-tertiary" style={{ width: '380px' }}>
+    <div className="d-flex flex-column align-items-stretch bg-body-tertiary" style={{ height: '100vh' }}>
       <div className="d-flex flex-column align-items-center p-3 bg-light">
         <h5>{currentUser}</h5>
         <Dropdown onSelect={handleModelSelect}>
@@ -35,40 +36,46 @@ const Sidebar = () => {
           </Dropdown.Menu>
         </Dropdown>
       </div>
-      <a href="/" className="d-flex align-items-center p-3 link-body-emphasis text-decoration-none border-bottom">
-        <span className="fs-5 fw-semibold">Threads</span>
-      </a>
-      <div className="list-group list-group-flush border-bottom scrollarea">
-        {threads.map((thread) => (
-          <a href="#" key={thread.id} className="list-group-item list-group-item-action py-3 lh-sm">
-            <div className="d-flex w-100 align-items-center justify-content-between">
-              <strong className="mb-1">{thread.title}</strong>
-              <small>Model</small>
-            </div>
-            <div className="col-10 mb-1 small">
-              {/* Add a description or other information related to the thread here. */}
-            </div>
+      <ResizableBox width={Infinity} height={500} axis="y" minConstraints={[Infinity, 50]} maxConstraints={[Infinity, 1000]}>
+        <div className="d-flex flex-column">
+          <a href="/" className="d-flex align-items-center p-3 link-body-emphasis text-decoration-none border-bottom">
+            <span className="fs-5 fw-semibold">Threads</span>
           </a>
-        ))}
-      </div>
-      <a href="/" className="d-flex align-items-center p-3 link-body-emphasis text-decoration-none border-bottom">
-        <span className="fs-5 fw-semibold">Public Threads</span>
-      </a>
-      <div className="list-group list-group-flush border-bottom scrollarea">
-        {publicThreads.map((thread) => (
-          <a href="#" key={thread.id} className="list-group-item list-group-item-action py-3 lh-sm">
-            <div className="d-flex w-100 align-items-center justify-content-between">
-              <strong className="mb-1">{thread.title}</strong>
-              <small>Model</small>
-            </div>
-            <div className="col-10 mb-1 small">
-              {/* Add a description or other information related to the public thread here. */}
-            </div>
-          </a>
-        ))}
+          <div className="list-group list-group-flush border-bottom scrollarea">
+            {threads.map((thread) => (
+              <a href="#" key={thread.id} className="list-group-item list-group-item-action py-3 lh-sm">
+                <div className="d-flex w-100 align-items-center justify-content-between">
+                  <strong className="mb-1">{thread.title}</strong>
+                  <small>Model</small>
+                </div>
+                <div className="col-10 mb-1 small">
+                  {/* Add a description or other information related to the thread here. */}
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </ResizableBox>
+      <div className="d-flex flex-column">
+        <a href="/" className="d-flex align-items-center p-3 link-body-emphasis text-decoration-none border-bottom">
+          <span className="fs-5 fw-semibold">Public Threads</span>
+        </a>
+        <div className="list-group list-group-flush border-bottom scrollarea">
+          {publicThreads.map((thread) => (
+            <a href="#" key={thread.id} className="list-group-item list-group-item action py-3 lh-sm">
+              <div className="d-flex w-100 align-items-center justify-content-between">
+                <strong className="mb-1">{thread.title}</strong>
+                <small>Model</small>
+              </div>
+              <div className="col-10 mb-1 small">
+                {/* Add a description or other information related to the public thread here. */}
+              </div>
+            </a>
+          ))}
+        </div>
       </div>
     </div>
   );
 };
-
+            
 export default Sidebar;
