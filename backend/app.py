@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import users, llm_identities, threads, messages
+# from starlette.middleware.cors import CORSMiddleware
+from routers import users, llm_identities, threads, messages, auth
 
 from dotenv import load_dotenv
 import os
@@ -12,7 +13,9 @@ app = FastAPI()
 # Set up CORS middleware
 origins = [
     "http://localhost:3000",  # Adjust this to your frontend's development server URL
-    "https://your-production-frontend-url.com",  # Replace this with your production frontend URL
+    "http://localhost",
+    os.environ.get('FRONTEND_URL'),  # Replace this with your production frontend URL
+    os.environ.get('REACT_APP_BACKEND_URL')
 ]
 
 app.add_middleware(
@@ -28,3 +31,4 @@ app.include_router(users.router)
 app.include_router(llm_identities.router)
 app.include_router(threads.router)
 app.include_router(messages.router)
+app.include_router(auth.router)

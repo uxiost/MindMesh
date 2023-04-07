@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import {
   BrowserRouter as Router,
@@ -12,6 +12,7 @@ import ThreadView from './components/ThreadView/ThreadView';
 import LoginPage from './pages/LoginPage';
 import IdentityManagementPage from './pages/IdentityManagementPage';
 import ThreadCreationPage from './pages/ThreadCreationPage';
+
 
 // Mock data for testing
 const repeatElement = (element, n) => {
@@ -74,12 +75,13 @@ const App = () => {
   };
 
   const MainScreen = () => {
+  
     return (
       <Row>
         <Col md={2}>
           <Sidebar />
         </Col>
-        <Col md={10}  style={{ height: '100vh', overflowY: 'auto', padding: '1rem' }}>
+        <Col md={10} style={{ height: "100vh", overflowY: "auto", padding: "1rem" }}>
           <ThreadView thread={selectedThread} />
         </Col>
       </Row>
@@ -93,8 +95,8 @@ const App = () => {
        <style>{` body { margin: 0; }` }</style>
         <Container fluid>
           <Routes>
-            <Route path="/" element={<LoginPage />} />
-            <Route path="/main" element={<MainScreen />} />
+            <Route path="/" element={<MainScreen />} />
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/identities" element={<IdentityManagementPage />} />
             <Route path="/create-thread" element={<ThreadCreationPage />} />
           </Routes>

@@ -8,6 +8,7 @@ from database import get_db
 
 import secrets
 
+from dependencies import get_authenticated_user, Token
 
 router = APIRouter()
 
@@ -26,6 +27,9 @@ class LLMIdentityOut(LLMIdentityCreate):
 class LLMIdentityUpdate(BaseModel):
     model_name: str
     api_token: str
+
+class LLMIdentityListOut(LLMIdentityOut):
+    pass
 
 # POST /llm-identities: Create a new LLM identity
 @router.post("/llm-identities", response_model=LLMIdentityOut)
@@ -84,3 +88,13 @@ def delete_llm_identity(id: int, db: Session = Depends(get_db)):
     db.commit()
 
     return {"detail": "LLM Identity deleted"}
+
+# GET /llm-identities/user/:user_id: Retrieve LLM identities for a specific user
+@router.get("/llm-identities/user/{user_id}", response_model=List[LLMIdentityListOut])
+def get_llm_identities_for_user(user_id: int, db: Session = Depends(get_db), user: User = Depends(get_authenticated_user)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    llm_identities = db.query(LLMIdentity).filter(LLMIdentity.user_id == user_id).all()
+    return llm_identities

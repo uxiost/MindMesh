@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ListGroup, Dropdown } from 'react-bootstrap';
+import { Button, ButtonGroup } from 'react-bootstrap';
 import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
+import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+import axios from 'axios';
 
 const currentUser = 'John Doe';
 const models = ['Model 1', 'Model 2', 'Model 3'];
@@ -14,27 +17,118 @@ const publicThreads = [
   { id: 4, title: 'Public Thread 2' },
 ];
 
+const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+const backendURL = process.env.REACT_APP_BACKEND_URL;
+
 const Sidebar = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userProfile, setUserProfile] = useState(null);
+  const [llmIdentities, setLlmIdentities] = useState([]);
+
+  const handleLoginSuccess = async (credentialResponse) => {
+    const token = credentialResponse.credential;
+    try {
+      const response = await axios.post(`${backendURL}/authenticate`, {
+        token,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
+  
+      const userInfo = response.data;
+      console.log('User info:', userInfo);
+      setIsLoggedIn(true);
+      setUserProfile(userInfo);
+  
+      // Store user profile data and idToken in local storage
+      localStorage.setItem('userProfile', JSON.stringify(userInfo));
+      localStorage.setItem('idToken', token);
+    } catch (error) {
+      console.error('Error during authentication:', error);
+    }
+  };
+  
+
+  useEffect(() => {
+    const storedUserProfile = localStorage.getItem('userProfile');
+    if (storedUserProfile) {
+      setIsLoggedIn(true);
+      setUserProfile(JSON.parse(storedUserProfile));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      const fetchLlmIdentities = async () => {
+        try {
+          const idToken = localStorage.getItem('idToken');
+          const response = await axios.get(`/llm-identities/user/${userProfile.google_account_id}`, {
+            headers: {
+              'Authorization': `Bearer ${idToken}`,
+            },
+          });
+          setLlmIdentities(response.data);
+        } catch (error) {
+          console.error('Error fetching LLM identities:', error);
+        }
+      };
+
+      fetchLlmIdentities();
+    }
+  }, [isLoggedIn, userProfile]);
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUserProfile(null);
+    localStorage.removeItem('userProfile');
+    localStorage.removeItem('idToken');
+  };
+
   const handleModelSelect = (selectedModel) => {
     console.log('Selected model:', selectedModel);
   };
 
   return (
     <div className="d-flex flex-column align-items-stretch bg-body-tertiary" style={{ height: '100vh' }}>
-      <div className="d-flex flex-column align-items-center p-3 bg-light">
-        <h5>{currentUser}</h5>
-        <Dropdown onSelect={handleModelSelect}>
-          <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-            Select Model
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            {models.map((model, index) => (
-              <Dropdown.Item key={index} eventKey={model}>
-                {model}
-              </Dropdown.Item>
-            ))}
-          </Dropdown.Menu>
-        </Dropdown>
+  
+  <div className="d-flex flex-column align-items-center p-3 bg-light">
+        <h5>MindMesh</h5>
+        {isLoggedIn ? (
+  <div className="d-flex align-items-center">
+    <p className="mb-0" style={{ marginRight: '8px' }}>Welcome, {userProfile.name}</p>
+    <ButtonGroup size="sm">
+      <Button variant="outline-secondary" onClick={handleLogout}>
+        Logout
+      </Button>
+    </ButtonGroup>
+  </div>
+) : (
+  <GoogleOAuthProvider clientId={clientId}>
+    <GoogleLogin onSuccess={handleLoginSuccess} onError={error => console.log(error)} />
+  </GoogleOAuthProvider>
+)}
+
+  
+{isLoggedIn ? (
+  <Dropdown onSelect={handleModelSelect}>
+    <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+      Select Model
+    </Dropdown.Toggle>
+    <Dropdown.Menu>
+      {llmIdentities.map((identity, index) => (
+        <Dropdown.Item key={index} eventKey={identity.model_name}>
+          {identity.model_name}
+        </Dropdown.Item>
+      ))}
+    </Dropdown.Menu>
+  </Dropdown>
+) : (
+  <p>Please log in to see your LLM identities.</p>
+)}
+
+
       </div>
       <ResizableBox width={Infinity} height={500} axis="y" minConstraints={[Infinity, 50]} maxConstraints={[Infinity, 1000]}>
         <div className="d-flex flex-column">
