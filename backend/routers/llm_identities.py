@@ -89,12 +89,16 @@ def delete_llm_identity(id: int, db: Session = Depends(get_db)):
 
     return {"detail": "LLM Identity deleted"}
 
+from dependencies import get_authenticated_user, Token
+
 # GET /llm-identities/user/:user_id: Retrieve LLM identities for a specific user
-@router.get("/llm-identities/user/{user_id}", response_model=List[LLMIdentityListOut])
-def get_llm_identities_for_user(user_id: int, db: Session = Depends(get_db), user: User = Depends(get_authenticated_user)):
-    user = db.query(User).filter(User.id == user_id).first()
+@router.get("/llm-identities/user/{google_account_id}", response_model=List[LLMIdentityOut])
+def get_llm_identities_by_user(google_account_id: str, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.google_account_id == google_account_id).first()
+
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    llm_identities = db.query(LLMIdentity).filter(LLMIdentity.user_id == user_id).all()
+    llm_identities = db.query(LLMIdentity).filter(LLMIdentity.user_id == user.id).all()
+
     return llm_identities

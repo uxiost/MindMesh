@@ -41,7 +41,7 @@ const Sidebar = () => {
       console.log('User info:', userInfo);
       setIsLoggedIn(true);
       setUserProfile(userInfo);
-  
+      
       // Store user profile data and idToken in local storage
       localStorage.setItem('userProfile', JSON.stringify(userInfo));
       localStorage.setItem('idToken', token);
@@ -58,26 +58,29 @@ const Sidebar = () => {
       setUserProfile(JSON.parse(storedUserProfile));
     }
   }, []);
-
+  
   useEffect(() => {
     if (isLoggedIn) {
-      const fetchLlmIdentities = async () => {
+      const fetchData = async () => {
         try {
-          const idToken = localStorage.getItem('idToken');
-          const response = await axios.get(`/llm-identities/user/${userProfile.google_account_id}`, {
+          const idToken = localStorage.getItem('idToken'); // Add this line to retrieve the idToken from local storage
+          const response = await axios.get(`${backendURL}/llm-identities/user/${userProfile.google_account_id}`, {
             headers: {
+              'Content-Type': 'application/json',
               'Authorization': `Bearer ${idToken}`,
             },
           });
-          setLlmIdentities(response.data);
+          setLLMIdentities(response.data);
         } catch (error) {
           console.error('Error fetching LLM identities:', error);
         }
       };
-
-      fetchLlmIdentities();
+      fetchData();
     }
   }, [isLoggedIn, userProfile]);
+  
+
+
 
   const handleLogout = () => {
     setIsLoggedIn(false);
