@@ -23,7 +23,10 @@ const backendURL = process.env.REACT_APP_BACKEND_URL;
 const Sidebar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
-  const [llmIdentities, setLlmIdentities] = useState([]);
+  const [llmIdentities, setLLMIdentities] = useState([]);
+  const [selectedModel, setSelectedModel] = useState(null);
+  const [selectedThreads, setSelectedThreads] = useState([]);
+  const [publicThreads, setPublicThreads] = useState([]);
 
   const handleLoginSuccess = async (credentialResponse) => {
     const token = credentialResponse.credential;
@@ -50,7 +53,6 @@ const Sidebar = () => {
     }
   };
   
-
   useEffect(() => {
     const storedUserProfile = localStorage.getItem('userProfile');
     if (storedUserProfile) {
@@ -78,10 +80,11 @@ const Sidebar = () => {
       fetchData();
     }
   }, [isLoggedIn, userProfile]);
+
+  useEffect(() => {
+    fetchPublicThreads();
+  }, []);
   
-
-
-
   const handleLogout = () => {
     setIsLoggedIn(false);
     setUserProfile(null);
@@ -91,7 +94,34 @@ const Sidebar = () => {
 
   const handleModelSelect = (selectedModel) => {
     console.log('Selected model:', selectedModel);
+    setSelectedModel(selectedModel);
+    fetchThreads(selectedModel);
   };
+  
+  const fetchThreads = async (modelName) => {
+    try {
+      const idToken = localStorage.getItem('idToken');
+      const response = await axios.get(`${backendURL}/threads/model/${modelName}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`,
+        },
+      });
+      setSelectedThreads(response.data);
+    } catch (error) {
+      console.error('Error fetching threads:', error);
+    }
+  };
+
+  const fetchPublicThreads = async () => {
+    try {
+      const response = await axios.get(`${backendURL}/threads`);
+      setPublicThreads(response.data);
+    } catch (error) {
+      console.error('Error fetching public threads:', error);
+    }
+  };
+  
 
   return (
     <div className="d-flex flex-column align-items-stretch bg-body-tertiary" style={{ height: '100vh' }}>
@@ -113,23 +143,23 @@ const Sidebar = () => {
   </GoogleOAuthProvider>
 )}
 
-  
-{isLoggedIn ? (
-  <Dropdown onSelect={handleModelSelect}>
-    <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-      Select Model
-    </Dropdown.Toggle>
-    <Dropdown.Menu>
-      {llmIdentities.map((identity, index) => (
-        <Dropdown.Item key={index} eventKey={identity.model_name}>
-          {identity.model_name}
-        </Dropdown.Item>
-      ))}
-    </Dropdown.Menu>
-  </Dropdown>
-) : (
-  <p>Please log in to see your LLM identities.</p>
-)}
+
+        {isLoggedIn ? (
+          <Dropdown onSelect={handleModelSelect}>
+            <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+              {selectedModel ? selectedModel : 'Select Model'}
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              {llmIdentities.map((identity, index) => (
+                <Dropdown.Item key={index} eventKey={identity.model_name}>
+                  {identity.model_name}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+        ) : (
+          <p>Please log in to see your LLM identities.</p>
+        )}
 
 
       </div>
@@ -139,11 +169,11 @@ const Sidebar = () => {
             <span className="fs-5 fw-semibold">Threads</span>
           </a>
           <div className="list-group list-group-flush border-bottom scrollarea">
-            {threads.map((thread) => (
+            {selectedThreads.map((thread) => (
               <a href="#" key={thread.id} className="list-group-item list-group-item-action py-3 lh-sm">
                 <div className="d-flex w-100 align-items-center justify-content-between">
                   <strong className="mb-1">{thread.title}</strong>
-                  <small>Model</small>
+                  <small>{selectedModel}</small>
                 </div>
                 <div className="col-10 mb-1 small">
                   {/* Add a description or other information related to the thread here. */}

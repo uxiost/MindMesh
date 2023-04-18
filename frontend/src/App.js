@@ -69,8 +69,7 @@ const App = () => {
 
   const [selectedThread, setSelectedThread] = useState(threads[0]);
   
-  const handleThreadSelect = (threadId) => {
-    const thread = threads.find((t) => t.id === threadId);
+  const handleThreadSelect = (thread) => {
     setSelectedThread(thread);
   };
 
@@ -79,7 +78,7 @@ const App = () => {
     return (
       <Row>
         <Col md={2}>
-          <Sidebar />
+          <Sidebar onThreadSelect={handleThreadSelect} />
         </Col>
         <Col md={10} style={{ height: "100vh", overflowY: "auto", padding: "1rem" }}>
           <ThreadView thread={selectedThread} />
