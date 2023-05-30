@@ -123,16 +123,22 @@ CREATE DATABASE mindmesh;
 
 # Setup
 ```
+# setup .env
+DATABASE_URL=
+REACT_APP_GOOGLE_CLIENT_ID= 
+
 # backend setup
 python -m venv venv
 source venv/bin/activate
-pip install fastapi uvicorn gino asyncpg
+pip install -r requirements.txt
 
 # frontend setup
-npm install -g create-react-app
-create-react-app frontend
 cd frontend
-npm install bootstrap react-bootstrap react-router-dom react-router-bootstrap react-icons react-dnd react-dnd-html5-backend
+npm install
+
+# launch
+cd backend && uvicorn app:app --host 0.0.0.0 --port ${PORT:-5000}
+cd frontend && npm start
 
 # PostgreSQL
 sudo apt-get update
