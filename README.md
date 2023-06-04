@@ -124,8 +124,13 @@ CREATE DATABASE mindmesh;
 # Setup
 ```
 # setup .env
-DATABASE_URL=
-REACT_APP_GOOGLE_CLIENT_ID= 
+DATABASE_URL= # Obtain from Heroku
+REACT_APP_GOOGLE_CLIENT_ID= # Obtain from https://console.cloud.google.com/apis/credentials/oauthclient Additional Information -> Client ID 
+REACT_APP_BACKEND_URL=https://xxxxxx-5000.preview.app.github.dev
+FRONTEND_URL=https://xxxxxx-3000.preview.app.github.dev
+
+# Auth setup
+Add your codespace url https://xxxxxxx-3000.preview.app.github.dev to Authorized JavaScript origins in GCP
 
 # backend setup
 python -m venv venv
@@ -139,6 +144,7 @@ npm install
 # launch
 cd backend && uvicorn app:app --host 0.0.0.0 --port ${PORT:-5000}
 cd frontend && npm start
+set port visibility to PUBLIC
 
 # PostgreSQL
 sudo apt-get update
