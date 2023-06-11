@@ -1194,5 +1194,10 @@ export default Conversation;
 
 --END--
 
-Fix the code to show the messages from the user selected threads (either public or private) in the threads view. By default, dont show any thread.
-Only give back the full scripts involded in the modification. Use the same format as provided. Do not give snippets, only full scripts.
+I want to make a new modification to show in the threads view the message in the selected thread whenever a user selects:
+a. A public thread or
+b. a private Thread
+
+ By default, dont show any thread.
+
+Explain step by step what do you need to implement this and ask any clarifying questions you need.

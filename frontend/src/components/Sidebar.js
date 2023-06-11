@@ -20,7 +20,7 @@ const publicThreads = [
 const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 const backendURL = process.env.REACT_APP_BACKEND_URL;
 
-const Sidebar = () => {
+const Sidebar = ({ onThreadSelect }) => {  
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
   const [llmIdentities, setLLMIdentities] = useState([]);
@@ -97,6 +97,10 @@ const Sidebar = () => {
     setSelectedModel(selectedModel);
     fetchThreads(selectedModel);
   };
+
+  const handleThreadSelect = (thread, model) => {  
+    onThreadSelect(thread, model);  
+  };  
   
   const fetchThreads = async (modelName) => {
     try {
@@ -170,8 +174,13 @@ const Sidebar = () => {
           </a>
           <div className="list-group list-group-flush border-bottom scrollarea">
             {selectedThreads.map((thread) => (
-              <a href="#" key={thread.id} className="list-group-item list-group-item-action py-3 lh-sm">
-                <div className="d-flex w-100 align-items-center justify-content-between">
+              <a  
+  key={thread.id}  
+  className="list-group-item list-group-item action py-3 lh-sm"  
+  onClick={(event) => { event.preventDefault(); handleThreadSelect(thread, 'private'); }}  
+  style={{cursor: 'pointer'}}  
+>  
+                            <div className="d-flex w-100 align-items-center justify-content-between">
                   <strong className="mb-1">{thread.title}</strong>
                   <small>{selectedModel}</small>
                 </div>
@@ -189,7 +198,12 @@ const Sidebar = () => {
         </a>
         <div className="list-group list-group-flush border-bottom scrollarea">
           {publicThreads.map((thread) => (
-            <a href="#" key={thread.id} className="list-group-item list-group-item action py-3 lh-sm">
+            <a  
+  key={thread.id}  
+  className="list-group-item list-group-item action py-3 lh-sm"  
+  onClick={(event) => { event.preventDefault(); handleThreadSelect(thread, 'public'); }}  
+  style={{cursor: 'pointer'}}  
+>  
               <div className="d-flex w-100 align-items-center justify-content-between">
                 <strong className="mb-1">{thread.title}</strong>
                 <small>Model</small>

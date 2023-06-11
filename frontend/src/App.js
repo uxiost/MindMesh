@@ -13,6 +13,10 @@ import LoginPage from './pages/LoginPage';
 import IdentityManagementPage from './pages/IdentityManagementPage';
 import ThreadCreationPage from './pages/ThreadCreationPage';
 
+import axios from 'axios';  
+
+
+const backendURL = process.env.REACT_APP_BACKEND_URL;
 
 // Mock data for testing
 const repeatElement = (element, n) => {
@@ -59,6 +63,20 @@ const threads = [
 
 const App = () => {
 
+  // In App.js  
+const [selectedModel, setSelectedModel] = useState(null);  
+
+  const [selectedThreadMessages, setSelectedThreadMessages] = useState([]);  
+
+  const fetchMessagesForSelectedThread = async (threadId) => {  
+    try {  
+      const response = await axios.get(`${backendURL}/threads/${threadId}/messages`);  
+      setSelectedThreadMessages(response.data);  
+    } catch (error) {  
+      console.error('Error fetching messages:', error);  
+    }  
+  }; 
+
   const handleCreateThread = () => {
     console.log('Create new thread');
   };
@@ -67,7 +85,8 @@ const App = () => {
     console.log('Send message:', message);
   };
 
-  const [selectedThread, setSelectedThread] = useState(threads[0]);
+const [selectedThread, setSelectedThread] = useState(null);  
+
   
   const handleThreadSelect = (thread) => {
     setSelectedThread(thread);
@@ -78,10 +97,11 @@ const App = () => {
     return (
       <Row>
         <Col md={2}>
-          <Sidebar onThreadSelect={handleThreadSelect} />
-        </Col>
+        <Sidebar onThreadSelect={(thread, model) => { setSelectedThread(thread); setSelectedModel(model); fetchMessagesForSelectedThread(thread.id); }} />  
+     
+      </Col>
         <Col md={10} style={{ height: "100vh", overflowY: "auto", padding: "1rem" }}>
-          <ThreadView thread={selectedThread} />
+        <ThreadView thread={selectedThread} messages={selectedThreadMessages} />  
         </Col>
       </Row>
     );
